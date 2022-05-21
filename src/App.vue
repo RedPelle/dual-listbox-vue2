@@ -11,20 +11,30 @@
   <body>
     <div id="app">
       <div class="container">
+
+        <div style="margin: 40px; text-align: center;">
+          <button @click="loadData()">Click here to load sample data</button>
+        </div>
+        <div style="margin: 40px; text-align: center;">
+          Available items: {{ dualListBoxData.availableItems.length }} - Selected items: {{ dualListBoxData.selectedItems.length }}
+        </div>
+        
         <DualListBox 
           v-model="dualListBoxData"
+          :removeItemsOnSelect="true"
           categoryField="category" 
           displayField="name" 
           keyField="name" 
-          labelSearchAvailable="Cerca tra i disponibili..."
-          labelSearchSelected="Cerca tra i selezionati..."
-          labelAdd="Aggiungi ›"
-          labelRemove="‹ Rimuovi"
-          labelNoResult="Nessun risultato trovato"
+          labelSearchAvailable="Search available items..."
+          labelSearchSelected="Search selected items..."
+          labelAdd="Add ›"
+          labelRemove="‹ Remove"
+          labelNoResult="No result found."
           iconsTheme="chevron"
           @add="onItemsAdded"
           @remove="onItemsRemoved"
           />
+
       </div>      
     </div>
   </body>
@@ -43,33 +53,43 @@ export default {
   data() {
     return {
       dualListBoxData: {
-        availableItems: [
-        { "category": "Category 1", "name": "Item 1.1" },
-        { "category": "Category 1", "name": "Item 1.2" },
-        { "category": "Category 1", "name": "Item 1.3" },
-        { "category": "Category 1", "name": "Item 1.4" },
-        { "category": "Category 1", "name": "Item 1.5" },
-        { "category": "Category 1", "name": "Item 1.6" },
-        { "category": "Category 2", "name": "Item 2.1" },
-        { "category": "Category 2", "name": "Item 2.2" },
-        { "category": "Category 2", "name": "Item 2.3" },
-        { "category": "Category 2", "name": "Item 2.4" },
-        { "category": "Category 2", "name": "Item 2.5" },
-        { "category": "Category 2", "name": "Item 2.6" },
-        { "category": "Category 3", "name": "Item 3.1" },
-        { "category": "Category 3", "name": "Item 3.2" },
-        { "category": "Category 3", "name": "Item 3.3" },
-        { "category": "Category 3", "name": "Item 3.4" },
-        { "category": "Category 3", "name": "Item 3.5" },
-        { "category": "Category 3", "name": "Item 3.6" },        
-      ],
-      selectedItems: [
-        //{ "category": "Category 1", "name": "Item 1.3" }
-      ],
+        availableItems: [],
+        selectedItems: [],
       }
     }
   },
   methods: {
+    loadData() {
+      // simulate ajax call
+      setTimeout(() => {
+      
+        this.dualListBoxData = {
+          availableItems: [
+            { "category": "Category 1", "name": "Item 1.1" },
+            { "category": "Category 1", "name": "Item 1.2" },
+            { "category": "Category 1", "name": "Item 1.3" },
+            { "category": "Category 1", "name": "Item 1.4" },
+            { "category": "Category 1", "name": "Item 1.5" },
+            { "category": "Category 1", "name": "Item 1.6" },
+            { "category": "Category 2", "name": "Item 2.1" },
+            { "category": "Category 2", "name": "Item 2.2" },
+            { "category": "Category 2", "name": "Item 2.3" },
+            { "category": "Category 2", "name": "Item 2.4" },
+            { "category": "Category 2", "name": "Item 2.5" },
+            { "category": "Category 2", "name": "Item 2.6" },
+            { "category": "Category 3", "name": "Item 3.1" },
+            { "category": "Category 3", "name": "Item 3.2" },
+            { "category": "Category 3", "name": "Item 3.3" },
+            { "category": "Category 3", "name": "Item 3.4" },
+            { "category": "Category 3", "name": "Item 3.5" },
+            { "category": "Category 3", "name": "Item 3.6" },        
+          ],
+          selectedItems: [
+          ],
+        };
+
+      }, 1000);    
+    },
     onItemsAdded(selectedItems) {
       console.info("Adding:");
       for (let item of selectedItems) {            
@@ -87,12 +107,4 @@ export default {
 </script>
 
 <style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-} */
 </style>

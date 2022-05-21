@@ -1,14 +1,11 @@
 <template>
 <div class="dual-listbox-container">
-  <p></p>
   <div class="col-md-6 dual-listbox-available-items">
     <GroupListBox 
-      v-model="dualListBoxData.availableItems"
+      :value="value.availableItems"
       :iconsTheme="iconsTheme" 
       :categoryField="categoryField"
       :displayField="displayField"
-      :keyField="keyField"
-      :removeItemsOnSelect="true"
       :labelSelect="labelAdd"
       :labelSearch="labelSearchAvailable"
       :labelNoResult="labelNoResult"
@@ -17,12 +14,10 @@
   </div>
   <div class="col-md-6 dual-listbox-selected-items">
     <GroupListBox
-      v-model="dualListBoxData.selectedItems" 
+      :value="value.selectedItems" 
       :iconsTheme="iconsTheme"
       :categoryField="categoryField" 
-      :displayField="displayField" 
-      :keyField="keyField" 
-      :removeItemsOnSelect="true"
+      :displayField="displayField"
       :labelSelect="labelRemove" 
       :labelSearch="labelSearchSelected"
       :labelNoResult="labelNoResult"
@@ -40,7 +35,14 @@ export default {
     GroupListBox
   },
   props: {
-    value: Object, //{ availableItems, selectedItems},
+    removeItemsOnSelect: Boolean,
+    value: {
+      type: Object, // { availableItems: [], selectedItems: [] },
+      required: true,
+      default() {
+        return { availableItems: [], selectedItems: [] };
+      }
+    },
     categoryField: String,
     displayField: String,
     keyField: String,
@@ -83,38 +85,37 @@ export default {
   },
   data() {
     return {
-      dualListBoxData: { availableItems: [], selectedItems: [] },
     }
-  },
-  computed: {
-  },
-  mounted() {
-    this.dualListBoxData = JSON.parse(JSON.stringify(this.value));
-  },
-  methods: {
+  },  
+  methods: {    
     addItems: function(selectedItems) {
 
       this.$emit('add', selectedItems);
 
-      // console.info("Adding:");
-      // for (let item of selectedItems) {        
-      //   console.info(JSON.stringify(item));
-      // }
+      let tmpValue = [].concat(this.value.availableItems);
 
-      this.dualListBoxData.selectedItems.push(...selectedItems);
-      this.$emit('input', this.dualListBoxData);
+      if (this.removeItemsOnSelect) {
+        for (let item of selectedItems) {
+            const index = tmpValue.findIndex(o => o[this.keyField] === item[this.keyField]);
+            tmpValue.splice(index, 1);
+        }
+        this.$emit('input', { availableItems: tmpValue, selectedItems: this.value.selectedItems.concat(selectedItems) });
+      }
+
     },
     removeItems: function(selectedItems) {
 
       this.$emit('remove', selectedItems);
 
-      // console.info("Removing:");
-      // for (let item of selectedItems) {            
-      //   console.info(JSON.stringify(item));
-      // }
+      let tmpValue = [].concat(this.value.selectedItems);
 
-      this.dualListBoxData.availableItems.push(...selectedItems);
-      this.$emit('input', this.dualListBoxData);
+      if (this.removeItemsOnSelect) {
+        for (let item of selectedItems) {
+            const index = tmpValue.findIndex(o => o[this.keyField] === item[this.keyField]);
+            tmpValue.splice(index, 1);
+        }
+        this.$emit('input', { availableItems: this.value.availableItems.concat(selectedItems), selectedItems: tmpValue });
+      }
     }
   },
   emits: ['add', 'remove']

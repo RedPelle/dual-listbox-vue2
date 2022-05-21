@@ -19,8 +19,8 @@
         <div class="group-listbox-group-header-icon" @click="select(subitems)"> {{ labelSelect }} </div>
       </div>
       <template v-if="mapExpand[categoryTitle]">
-        <div class="group-listbox-group-item" v-for="item in subitems" :key="item[keyField]">
-          {{ item.name }}
+        <div class="group-listbox-group-item" v-for="(item, index) in subitems" :key="index">
+          {{ item[displayField] }}
           <div class="group-listbox-group-item-icon" @click="select([item])"> {{ labelSelect }} </div>
         </div>
       </template>
@@ -39,8 +39,6 @@ export default {
     value: Array,
     categoryField: String,
     displayField: String,
-    keyField: String,
-    removeItemsOnSelect: Boolean,
     labelSelect: {
       type: String,
       default() {
@@ -84,29 +82,18 @@ export default {
   },
   methods: {
     groupBy: function(key, array) {
-      return array.reduce((objectsByKeyValue, obj) => {
-        const value = obj[key];
-        objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-        return objectsByKeyValue;
-      }, {});
+      return !array ? {} :
+        array.reduce((objectsByKeyValue, obj) => {
+          const value = obj[key];
+          objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+          return objectsByKeyValue;
+        }, {});
     },
     toggleExpand: function(key) {
       this.$set(this.mapExpand, key, !this.mapExpand[key]);
     },
     select: function(selectedItems) {
-
-      this.$emit('select', selectedItems);
-      
-      let tmpValue = JSON.parse(JSON.stringify(this.value));
-
-      if (this.removeItemsOnSelect) {
-        for (let item of selectedItems) {
-            //let index = this.value.indexOf(item);
-            const index = tmpValue.findIndex(o => o[this.keyField] === item[this.keyField]);
-            tmpValue.splice(index, 1);
-        }
-        this.$emit('input', tmpValue);
-      }
+      this.$emit('select', selectedItems);      
     }
   },
   emits: ['select']
@@ -164,8 +151,6 @@ export default {
   } 
   .group-listbox-group-header:hover .group-listbox-group-header-icon,
   .group-listbox-group-item:hover .group-listbox-group-item-icon {
-    /* background: #e2e0ea; */
-    /* color: blue; */
     display: inline-block;
   }
   .group-listbox-noresult {
