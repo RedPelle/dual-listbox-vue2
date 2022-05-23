@@ -3,31 +3,33 @@
     <div class="group-listbox-search">
       <input type="text" :placeholder="labelSearch" v-model="searchPattern" />
     </div>
-    <div class="group-listbox-group" v-for="(subitems, categoryTitle) in groupedItems" :key="categoryTitle">
-      <div class="group-listbox-group-header">
-        <div class="group-listbox-group-header-title" @click="toggleExpand(categoryTitle)">
-          <span v-if="mapExpand[categoryTitle]">
-            <img v-if="iconsTheme == 'chevron'" src="../assets/ic_fluent_chevron_up_regular_icon.png" />
-            <img v-if="iconsTheme == 'plus'" src="../assets/minus_square_icon.png" />
-          </span>
-          <span v-if="!mapExpand[categoryTitle]">
-            <img v-if="iconsTheme == 'chevron'" src="../assets/ic_fluent_chevron_down_regular_icon.png" />
-            <img v-if="iconsTheme == 'plus'" src="../assets/ic_fluent_add_square_regular_icon.png" />
-          </span>
-          {{ categoryTitle }}
+    <div class="group-listbox-items">
+      <div class="group-listbox-group" v-for="(subitems, categoryTitle) in groupedItems" :key="categoryTitle">
+        <div class="group-listbox-group-header">
+          <div class="group-listbox-group-header-title" @click="toggleExpand(categoryTitle)">
+            <span v-if="mapExpand[categoryTitle]">
+              <img v-if="iconsTheme == 'chevron'" src="../assets/ic_fluent_chevron_up_regular_icon.png" />
+              <img v-if="iconsTheme == 'plus'" src="../assets/minus_square_icon.png" />
+            </span>
+            <span v-if="!mapExpand[categoryTitle]">
+              <img v-if="iconsTheme == 'chevron'" src="../assets/ic_fluent_chevron_down_regular_icon.png" />
+              <img v-if="iconsTheme == 'plus'" src="../assets/ic_fluent_add_square_regular_icon.png" />
+            </span>
+            {{ categoryTitle }}
+          </div>
+          <div class="group-listbox-group-header-icon" @click="select(subitems)"> {{ labelSelect }} </div>
         </div>
-        <div class="group-listbox-group-header-icon" @click="select(subitems)"> {{ labelSelect }} </div>
+        <template v-if="mapExpand[categoryTitle]">
+          <div class="group-listbox-group-item" v-for="(item, index) in subitems" :key="index">
+            {{ item[displayField] }}
+            <div class="group-listbox-group-item-icon" @click="select([item])"> {{ labelSelect }} </div>
+          </div>
+        </template>
+              
       </div>
-      <template v-if="mapExpand[categoryTitle]">
-        <div class="group-listbox-group-item" v-for="(item, index) in subitems" :key="index">
-          {{ item[displayField] }}
-          <div class="group-listbox-group-item-icon" @click="select([item])"> {{ labelSelect }} </div>
-        </div>
-      </template>
-             
-    </div>
-    <div v-if="Object.keys(groupedItems).length === 0" class="group-listbox-noresult">
-      {{ labelNoResult }}
+      <div v-if="Object.keys(groupedItems).length === 0" class="group-listbox-noresult">
+        {{ labelNoResult }}
+      </div>
     </div>
   </div>
 </template>
